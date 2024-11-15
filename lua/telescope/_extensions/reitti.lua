@@ -13,8 +13,6 @@ local entry_display = require("telescope.pickers.entry_display")
 local function make_display(entry)
   local Path = require("reitti.utils.path")
 
-  print("Display entry:", vim.inspect(entry))
-
   local displayer = entry_display.create({
     separator = " ",
     items = {
@@ -45,8 +43,6 @@ local function projects(opts)
       finder = finders.new_table({
         results = results,
         entry_maker = function(entry)
-          print("Processing entry:", vim.inspect(entry))
-
           return {
             value = entry,
             display = make_display,
