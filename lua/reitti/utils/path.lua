@@ -11,6 +11,11 @@ function M.normalize(path)
   return vim.fn.fnamemodify(path, ":p"):gsub("\\", "/"):gsub("/$", "")
 end
 
+function M.shorten(path)
+  local homedir = vim.loop.os_homedir()
+  return path:gsub("^" .. homedir, "~")
+end
+
 function M.exists(path)
   return uv.fs_stat(path) ~= nil
 end
