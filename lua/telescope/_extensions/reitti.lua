@@ -70,5 +70,6 @@ end
 return telescope.register_extension({
   exports = {
     projects = projects,
+    reitti = projects,
   },
 })
