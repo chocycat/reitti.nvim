@@ -47,6 +47,26 @@ function M.add_project(path)
   end
 end
 
+-- marks a project as 'ignored' so it doesn't get added back
+function M.remove_project(path)
+  local abs_path = Path.normalize(path)
+  if M.projects[abs_path] then
+    -- mark it as ignored to prevent it from being discovered again
+    M.projects[abs_path].ignored = true
+
+    M.save_projects()
+  end
+end
+
+-- completely removes a project from the database
+function M.forget_project(path)
+  local abs_path = Path.normalize(path)
+  if M.projects[abs_path] then
+    M.projects[abs_path] = nil
+    M.save_projects()
+  end
+end
+
 function M.get_project(path)
   local abs_path = Path.normalize(path)
   return M.projects[abs_path]
@@ -80,14 +100,6 @@ function M.save_projects()
   vim.loop.fs_rename(temp_file, file_path)
 end
 
-function M.remove_project(path)
-  local abs_path = Path.normalize(path)
-  if M.projects[abs_path] then
-    M.projects[abs_path] = nil
-    M.save_projects()
-  end
-end
-
 function M.clear_projects()
   M.projects = {}
   M.save_projects()
@@ -95,6 +107,12 @@ end
 
 function M.list_projects()
   return vim.tbl_values(M.projects)
+end
+
+function M.visible_projects()
+  return vim.tbl_filter(function(p)
+    return not p.ignored
+  end, M.list_projects())
 end
 
 return M

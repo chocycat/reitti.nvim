@@ -1,5 +1,6 @@
 local M = {}
 
+local Project = require("reitti.core.project")
 local Path = require("reitti.utils.path")
 local Git = require("reitti.utils.git")
 local config = require("reitti.config")
@@ -24,6 +25,12 @@ function M.discover_projects(root)
 
   local function scan_dir(path, depth)
     if depth > max_depth then
+      return
+    end
+
+    -- skip ignored projects
+    local abs_path = Path.normalize(path)
+    if Project.projects[abs_path] and Project.projects[abs_path].ignored then
       return
     end
 

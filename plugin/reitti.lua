@@ -20,13 +20,45 @@ vim.api.nvim_create_user_command("ReittiDiscover", function(opts)
   require("reitti").discover_projects(path)
 end, { nargs = "?", complete = "dir" })
 
+vim.api.nvim_create_user_command("ReittiRemove", function(opts)
+  local path = opts.args ~= "" and opts.args or vim.fn.getcwd()
+  local abs_path = require("reitti.utils.path").normalize(path)
+
+  vim.ui.input({
+    prompt = string.format("Remove project '%s'? [y/N] ", abs_path),
+    default = "",
+  }, function(input)
+    print("")
+    if input and input:lower() == "y" then
+      require("reitti.core.project").remove_project(abs_path)
+    end
+  end)
+end, {
+  nargs = "?",
+  complete = function(arglead, _, _)
+    local projects = require("reitti.core.project").visible_projects()
+    local paths = vim.tbl_map(function(p)
+      return p.path
+    end, projects)
+    return vim.tbl_filter(function(p)
+      return p:find(arglead, 1, true)
+    end, paths)
+  end,
+})
+
 vim.api.nvim_create_user_command("ReittiForget", function(opts)
-  local Project = require("reitti.core.project")
-  if opts.args ~= "" then
-    Project.remove_project(opts.args)
-  else
-    Project.remove_project(vim.fn.getcwd())
-  end
+  local path = opts.args ~= "" and opts.args or vim.fn.getcwd()
+  local abs_path = require("reitti.utils.path").normalize(path)
+
+  vim.ui.input({
+    prompt = string.format("Permanently forget project '%s'? [y/N] ", abs_path),
+    default = "",
+  }, function(input)
+    print("")
+    if input and input:lower() == "y" then
+      require("reitti.core.project").forget_project(abs_path)
+    end
+  end)
 end, {
   nargs = "?",
   complete = function(arglead, _, _)

@@ -33,8 +33,7 @@ local function projects(opts)
   opts = opts or {}
 
   local Project = require("reitti.core.project")
-
-  local results = vim.tbl_values(Project.projects)
+  local results = Project.visible_projects()
 
   table.sort(results, function(a, b)
     return a.name:lower() < b.name:lower()
