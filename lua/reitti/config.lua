@@ -22,7 +22,6 @@ M.defaults = {
 
   session = {
     enabled = true,
-    save_interval = 30, -- in seconds
     components = {
       tabs = true,
       buffers = {
