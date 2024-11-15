@@ -54,8 +54,15 @@ function M.switch_project(path)
     project = Project.get_project(path)
   end
 
+  local current_dir = Workspace.get_current_directory()
+
+  -- before switch hook
+  if config.options.hooks.before_switch then
+    config.options.hooks.before_switch(current_dir, project.path)
+  end
+
   -- save current session
-  local current_project = Project.get_project(vim.fn.getcwd())
+  local current_project = Project.get_project(current_dir)
   if current_project then
     Session.save_session(current_project.path)
   end
@@ -67,6 +74,11 @@ function M.switch_project(path)
 
   project.last_opened = os.time()
   Project.save_projects()
+
+  -- after switch hook
+  if config.options.hooks.after_switch then
+    config.options.hooks.after_switch(current_dir, project.path)
+  end
 end
 
 function M.discover_projects(path)

@@ -31,6 +31,11 @@ M.defaults = {
       splits = true,
     },
   },
+
+  hooks = {
+    before_switch = nil,
+    after_switch = nil,
+  },
 }
 
 function M.setup(opts)
