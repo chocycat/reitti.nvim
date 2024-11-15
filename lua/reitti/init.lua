@@ -6,8 +6,31 @@ local Discovery = require("reitti.core.discovery")
 local Session = require("reitti.core.session")
 local Workspace = require("reitti.utils.workspace")
 
+local function auto_discovery()
+  if not config.options.auto_discover.enabled then
+    return
+  end
+
+  local paths = config.options.discovery.auto_discover.paths
+  if type(paths) == "string" then
+    paths = { paths }
+  end
+
+  for _, path in ipairs(paths) do
+    path = vim.fn.expand(path)
+    if vim.fn.isdirectory(path) == 1 then
+      M.discover_projects(path)
+    end
+  end
+end
+
 function M.setup(opts)
   config.setup(opts)
+
+  -- automatic project discovery
+  vim.schedule(function()
+    auto_discovery()
+  end)
 
   -- Telescope
   pcall(require("telescope").load_extension, "reitti")
