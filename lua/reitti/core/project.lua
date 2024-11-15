@@ -34,13 +34,22 @@ end
 
 M.projects = load_projects()
 
-function M.add_project(path)
+function M.add_project(path, opts)
+  opts = opts or {}
   local abs_path = Path.normalize(path)
+
+  if vim.fn.isdirectory(abs_path) ~= 1 then
+    vim.notify("Not a valid directory: " .. abs_path, vim.log.levels.ERROR)
+    return
+  end
+
   if not M.projects[abs_path] then
     M.projects[abs_path] = {
       path = abs_path,
       name = Path.basename(abs_path),
       last_opened = os.time(),
+      discovered_at = os.time(),
+      ignored = opts.ignored or false,
     }
 
     M.save_projects()

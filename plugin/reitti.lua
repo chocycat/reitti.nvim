@@ -20,6 +20,14 @@ vim.api.nvim_create_user_command("ReittiDiscover", function(opts)
   require("reitti").discover_projects(path)
 end, { nargs = "?", complete = "dir" })
 
+vim.api.nvim_create_user_command("ReittiAdd", function(opts)
+  local path = opts.args ~= "" and opts.args or vim.fn.getcwd()
+  require("reitti.core.project").add_project(path)
+end, {
+  nargs = "?",
+  complete = "dir",
+})
+
 vim.api.nvim_create_user_command("ReittiRemove", function(opts)
   local path = opts.args ~= "" and opts.args or vim.fn.getcwd()
   local abs_path = require("reitti.utils.path").normalize(path)
