@@ -57,7 +57,9 @@ local function projects(opts)
         actions.select_default:replace(function()
           actions.close(prompt_bufnr)
           local selection = action_state.get_selected_entry()
-          require("reitti").switch_project(selection.value.path)
+          if selection then
+            require("reitti").switch_project(selection.value.path)
+          end
         end)
         return true
       end,
